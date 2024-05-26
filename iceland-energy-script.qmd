@@ -14,7 +14,7 @@ editor: visual
 library(pxweb)
 library(tidyverse)
 library(readxl)
-library(jani)
+library(janitor)
 ```
 
 ```{r get-data-from-api}
@@ -23,7 +23,7 @@ library(jani)
 # I first run the code below. This creates a series of questions answerable by
 # typing different symbols. Once I go through all the steps, the functions 
 # prints all the commands needed to send a query and fetch the data.
-pxweb_get_data("https://px.hagstofa.is:443/pxen/api/v1/en/Umhverfi/4_orkumal/2_framleidslaognotkun/IDN02102.px")
+# pxweb_get_data("https://px.hagstofa.is:443/pxen/api/v1/en/Umhverfi/4_orkumal/2_framleidslaognotkun/IDN02102.px")
 
 # PXWEB query 
 pxweb_query_list <- 
@@ -53,9 +53,14 @@ isl_energy <- px_data_frame
 rm(d, px_data, px_data_comments, px_data_frame, pxweb_query_list)
 ```
 
-```{r}
+Now that I have the data saved as an object called 'isl_energy', I look at its structure.
+
+```{r glimpse-data-frame}
 # Get first view of the data
 glimpse(isl_energy)
-head(isl_energy)
 ```
 
+```{r}
+# Clean column names using 'janitor' package
+isl_energy <- isl_energy %>% clean_names() # `Gross energy consumption by source` becomes gross_energy_consumption_by_source
+```

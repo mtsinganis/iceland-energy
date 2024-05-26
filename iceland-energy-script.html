@@ -21,6 +21,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -71,6 +105,104 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="introduction" class="level1">
 <h1>Introduction</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load packages</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages('pxweb')</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages('janitor')</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pxweb)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>pxweb 0.17.0: R tools for the PX-WEB API.
+https://github.com/ropengov/pxweb</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+✔ purrr     1.0.2     </code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'janitor'
+
+The following objects are masked from 'package:stats':
+
+    chisq.test, fisher.test</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Save download link for data set</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># I first run the code below. This creates a series of questions answerable by</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># typing different symbols. Once I go through all the steps, the functions </span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co"># prints all the commands needed to send a query and fetch the data.</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co"># pxweb_get_data("https://px.hagstofa.is:443/pxen/api/v1/en/Umhverfi/4_orkumal/2_framleidslaognotkun/IDN02102.px")</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co"># PXWEB query </span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>pxweb_query_list <span class="ot">&lt;-</span> </span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="st">"Year"</span><span class="ot">=</span><span class="fu">c</span>(<span class="st">"1940"</span>,<span class="st">"1941"</span>,<span class="st">"1942"</span>,<span class="st">"1943"</span>,<span class="st">"1944"</span>,<span class="st">"1945"</span>,<span class="st">"1946"</span>,<span class="st">"1947"</span>,<span class="st">"1948"</span>,<span class="st">"1949"</span>,<span class="st">"1950"</span>,<span class="st">"1951"</span>,<span class="st">"1952"</span>,<span class="st">"1953"</span>,<span class="st">"1954"</span>,<span class="st">"1955"</span>,<span class="st">"1956"</span>,<span class="st">"1957"</span>,<span class="st">"1958"</span>,<span class="st">"1959"</span>,<span class="st">"1960"</span>,<span class="st">"1961"</span>,<span class="st">"1962"</span>,<span class="st">"1963"</span>,<span class="st">"1964"</span>,<span class="st">"1965"</span>,<span class="st">"1966"</span>,<span class="st">"1967"</span>,<span class="st">"1968"</span>,<span class="st">"1969"</span>,<span class="st">"1970"</span>,<span class="st">"1971"</span>,<span class="st">"1972"</span>,<span class="st">"1973"</span>,<span class="st">"1974"</span>,<span class="st">"1975"</span>,<span class="st">"1976"</span>,<span class="st">"1977"</span>,<span class="st">"1978"</span>,<span class="st">"1979"</span>,<span class="st">"1980"</span>,<span class="st">"1981"</span>,<span class="st">"1982"</span>,<span class="st">"1983"</span>,<span class="st">"1984"</span>,<span class="st">"1985"</span>,<span class="st">"1986"</span>,<span class="st">"1987"</span>,<span class="st">"1988"</span>,<span class="st">"1989"</span>,<span class="st">"1990"</span>,<span class="st">"1991"</span>,<span class="st">"1992"</span>,<span class="st">"1993"</span>,<span class="st">"1994"</span>,<span class="st">"1995"</span>,<span class="st">"1996"</span>,<span class="st">"1997"</span>,<span class="st">"1998"</span>,<span class="st">"1999"</span>,<span class="st">"2000"</span>,<span class="st">"2001"</span>,<span class="st">"2002"</span>,<span class="st">"2003"</span>,<span class="st">"2004"</span>,<span class="st">"2005"</span>,<span class="st">"2006"</span>,<span class="st">"2007"</span>,<span class="st">"2008"</span>,<span class="st">"2009"</span>,<span class="st">"2010"</span>,<span class="st">"2011"</span>,<span class="st">"2012"</span>,<span class="st">"2013"</span>,<span class="st">"2014"</span>,<span class="st">"2015"</span>,<span class="st">"2016"</span>,<span class="st">"2017"</span>,<span class="st">"2018"</span>,<span class="st">"2019"</span>,<span class="st">"2020"</span>),</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>       <span class="st">"Unit"</span><span class="ot">=</span><span class="fu">c</span>(<span class="st">"0"</span>,<span class="st">"1"</span>),</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>       <span class="st">"Type"</span><span class="ot">=</span><span class="fu">c</span>(<span class="st">"HYDRO"</span>,<span class="st">"GEOTHERMAL"</span>,<span class="st">"WIND"</span>,<span class="st">"OIL"</span>,<span class="st">"COAL"</span>,<span class="st">"PEAT"</span>,<span class="st">"RENEWABLE"</span>,<span class="st">"TOTAL"</span>,<span class="st">"TOTAL_NATIONAL"</span>,<span class="st">"TOTAL_IMPORT"</span>))</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Download data </span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>px_data <span class="ot">&lt;-</span> </span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pxweb_get</span>(<span class="at">url =</span> <span class="st">"https://px.hagstofa.is:443/pxen/api/v1/en/Umhverfi/4_orkumal/2_framleidslaognotkun/IDN02102.px"</span>,</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>            <span class="at">query =</span> pxweb_query_list)</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to data.frame </span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>px_data_frame <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(px_data, <span class="at">column.name.type =</span> <span class="st">"text"</span>, <span class="at">variable.value.type =</span> <span class="st">"text"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in pxweb_as_data_frame.pxweb_data(x, row.names = row.names, optional =
+optional, : NAs introduced by coercion</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># # Get pxweb data comments </span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># px_data_comments &lt;- pxweb_data_comments(px_data)</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># px_data_comments_df &lt;- as.data.frame(px_data_comments)</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># # Cite the data as </span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co"># pxweb_cite(px_data)</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Rename data frame</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>isl_energy <span class="ot">&lt;-</span> px_data_frame</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove all other objects</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(d, px_data, px_data_comments, px_data_frame, pxweb_query_list)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in rm(d, px_data, px_data_comments, px_data_frame, pxweb_query_list):
+object 'd' not found</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in rm(d, px_data, px_data_comments, px_data_frame, pxweb_query_list):
+object 'px_data_comments' not found</code></pre>
+</div>
+</div>
+<p>Now that I have the data saved as an object called ‘isl_energy’, I look at its structure.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get first view of the data</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(isl_energy)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 1,620
+Columns: 4
+$ Year                                 &lt;chr&gt; "1940", "1940", "1940", "1940", "…
+$ Unit                                 &lt;chr&gt; "Energy in, Terajoule", "Energy i…
+$ Type                                 &lt;chr&gt; "Hydro energy", "Geothermal energ…
+$ `Gross energy consumption by source` &lt;dbl&gt; 162.00, 525.00, NA, 812.04, 3849.…</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Clean column names using 'janitor' package</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>isl_energy <span class="ot">&lt;-</span> isl_energy <span class="sc">%&gt;%</span> <span class="fu">clean_names</span>() <span class="co"># `Gross energy consumption by source` becomes gross_energy_consumption_by_source</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 
 </main>

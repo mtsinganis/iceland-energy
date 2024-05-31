@@ -8,6 +8,7 @@ editor: visual
 # Introduction
 
 ```{r}
+#| output: false
 # Load packages
 # install.packages('pxweb')
 # install.packages('janitor')
@@ -17,12 +18,12 @@ library(readxl)
 library(janitor)
 ```
 
+I first run the code below. This creates a series of questions answerable by typing different symbols. Once I go through all the steps, the functions prints all the commands needed to send a query and fetch the data.
+
 ```{r get-data-from-api}
+#| warning: false
 # Save download link for data set
 
-# I first run the code below. This creates a series of questions answerable by
-# typing different symbols. Once I go through all the steps, the functions 
-# prints all the commands needed to send a query and fetch the data.
 # pxweb_get_data("https://px.hagstofa.is:443/pxen/api/v1/en/Umhverfi/4_orkumal/2_framleidslaognotkun/IDN02102.px")
 
 # PXWEB query 
@@ -53,14 +54,30 @@ isl_energy <- px_data_frame
 rm(d, px_data, px_data_comments, px_data_frame, pxweb_query_list)
 ```
 
-Now that I have the data saved as an object called 'isl_energy', I look at its structure.
+Now that I have the data saved as an object called `isl_energy`, I look at its structure.
 
 ```{r glimpse-data-frame}
 # Get first view of the data
 glimpse(isl_energy)
 ```
-
-```{r}
+I use the `clean_names()` function from the `janitor` package to create cleaner
+names (lower case names without spaces).
+```{r clean-names}
 # Clean column names using 'janitor' package
-isl_energy <- isl_energy %>% clean_names() # `Gross energy consumption by source` becomes gross_energy_consumption_by_source
+isl_energy <- isl_energy %>%
+                clean_names() %>%  # `Gross energy consumption by source` becomes gross_energy_consumption_by_source
+                  mutate(year = as.numeric(year))
+
 ```
+I create two separate data frames containing either the absolute energy values
+`isl_energy_abs` or the percentage `isl_energy_rel`.
+```{r split-frames}
+isl_energy_abs <- isl_energy %>% filter(unit == "Energy in, Terajoule")
+isl_energy_rel <- isl_energy %>% filter(unit == "Percentage")
+```
+
+# Percentage
+```{r}
+isl_energy_rel %>% group_by(year, type) %>% count()
+```
+
